@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>MathPeak 🏔️📐 | From Zero to Mathematical Mastery</title>
+  
+  <!-- Premium Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <!-- KaTeX for Lightning-Fast Beautiful Formulas -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js" onload="renderMathInElement(document.body);"></script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <!-- Main Styling Sheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="dark-mode"> <!-- Default premium dark mode -->
+  
+  <!-- App Shell Grid -->
+  <div class="app-container">
+    
+    <!-- Sidebar Navigation (Desktop) -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <div class="logo-icon">🏔️</div>
+        <div class="brand-text">
+          <span class="brand-name">MATHPEAK</span>
+          <span class="brand-tagline">Mastery Peak</span>
+        </div>
+      </div>
+      
+      <nav class="sidebar-nav">
+        <button class="nav-item active" data-view="dashboard">
+          <i data-lucide="layout-dashboard"></i>
+          <span>Dashboard</span>
+        </button>
+        <button class="nav-item" data-view="peaks">
+          <i data-lucide="mountain"></i>
+          <span>Learning Peaks</span>
+        </button>
+        <button class="nav-item" data-view="practice">
+          <i data-lucide="puzzle"></i>
+          <span>Practice Arena</span>
+        </button>
+        <button class="nav-item" data-view="visuals">
+          <i data-lucide="activity"></i>
+          <span>Visual Sandbox</span>
+        </button>
+        <button class="nav-item" data-view="formulas">
+          <i data-lucide="book-open"></i>
+          <span>Formula Hub</span>
+        </button>
+        <button class="nav-item" data-view="revision">
+          <i data-lucide="rotate-ccw"></i>
+          <span>Smart Revision</span>
+        </button>
+        <button class="nav-item" data-view="progress">
+          <i data-lucide="bar-chart-3"></i>
+          <span>Analytics</span>
+        </button>
+        <button class="nav-item" data-view="settings">
+          <i data-lucide="settings"></i>
+          <span>Settings</span>
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="user-badge-container">
+          <span class="avatar-icon">🌱</span>
+          <div class="user-meta">
+            <div class="user-rank" id="sidebar-rank">Math Beginner</div>
+            <div class="user-xp-pill"><span id="sidebar-xp">0</span> XP</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Panel Area -->
+    <main class="main-content">
+      
+      <!-- Top Header (Fuzzy Search & Quick Streaks) -->
+      <header class="top-header">
+        <div class="search-bar-container">
+          <i data-lucide="search" class="search-icon"></i>
+          <input type="text" id="global-search-input" placeholder="Fuzzy search topics, formulas, concepts... (e.g. 'derivitive')">
+          <div id="search-dropdown-results" class="search-results-dropdown hidden"></div>
+        </div>
+
+        <div class="header-actions">
+          <button class="streak-counter" id="streak-trigger" title="Daily streak tracker">
+            <span class="streak-icon">🔥</span>
+            <span class="streak-days"><strong id="header-streak-days">37</strong> Days</span>
+          </button>
+          
+          <button class="action-btn-circle" id="achievement-btn" title="View achievements">
+            <i data-lucide="award"></i>
+            <span class="badge-dot hidden" id="achievement-badge-dot"></span>
+          </button>
+          
+          <button class="action-btn-circle" id="continue-learning-header" title="Continue from where you left off">
+            <i data-lucide="play"></i>
+          </button>
+        </div>
+      </header>
+
+      <!-- View Containers -->
+      <div class="view-viewport">
+        
+        <!-- 1. HOME DASHBOARD -->
+        <section id="dashboard-view" class="view-panel active">
+          <div class="dashboard-grid">
+            
+            <!-- Left Panel: Profile and Learning Plan -->
+            <div class="dash-left-column">
+              <div class="welcome-card card-glowing">
+                <div class="welcome-header">
+                  <div class="rank-icon-large" id="dash-rank-icon">🌱</div>
+                  <div>
+                    <h1 class="welcome-title">Welcome Back, Explorer</h1>
+                    <p class="welcome-subtitle" id="dash-rank-name">Rank: Equation Explorer</p>
+                  </div>
+                </div>
+                <div class="xp-progress-bar-wrapper">
+                  <div class="xp-label-row">
+                    <span>Rank Progress</span>
+                    <span id="dash-xp-fraction">340 / 1000 XP</span>
+                  </div>
+                  <div class="xp-track">
+                    <div class="xp-fill" id="dash-xp-fill" style="width: 34%;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Today's Learning Plan -->
+              <div class="plan-card">
+                <div class="card-header">
+                  <i data-lucide="check-square" class="card-icon-cyan"></i>
+                  <h2>Today's Learning Plan</h2>
+                </div>
+                <div class="plan-list" id="dashboard-plan-list">
+                  <!-- Loaded dynamically by dashboard.js -->
+                  <div class="plan-item completed">
+                    <span class="plan-status">✅</span>
+                    <span class="plan-text">Arithmetic & Numbers Practice</span>
+                  </div>
+                  <div class="plan-item pending">
+                    <span class="plan-status">⏳</span>
+                    <span class="plan-text">Trigonometry Lesson</span>
+                  </div>
+                  <div class="plan-item failed">
+                    <span class="plan-status">❌</span>
+                    <span class="plan-text">Calculus Revision (Needs Attention)</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Quick Continue Card -->
+              <div class="continue-card card-gradient">
+                <div class="continue-content">
+                  <h3>Continue Your Climb</h3>
+                  <p id="continue-course-title">Next Topic: Quadratic Equations</p>
+                  <button class="btn btn-secondary btn-touch" id="dash-continue-btn">
+                    <i data-lucide="play-circle"></i> Resume Learning
+                  </button>
+                </div>
+                <div class="continue-graphic">🏔️</div>
+              </div>
+            </div>
+
+            <!-- Right Panel: Streak and Skill Snapshot -->
+            <div class="dash-right-column">
+              <div class="streak-grid-card">
+                <div class="streak-header">
+                  <h3>Study Streak</h3>
+                  <span class="streak-fire-large">🔥 <span id="dash-streak-count">37</span> Days</span>
+                </div>
+                <p class="streak-tagline">“Climb Mathematics, One Peak at a Time.”</p>
+                <div class="streak-calendar-row" id="streak-calendar-days">
+                  <!-- Generated dynamically in progress.js -->
+                </div>
+              </div>
+
+              <!-- Skill Snapshot -->
+              <div class="skills-card">
+                <div class="card-header">
+                  <i data-lucide="compass" class="card-icon-blue"></i>
+                  <h2>Mathematical Skill Snapshot</h2>
+                </div>
+                <div class="skills-list" id="dash-skills-snapshot">
+                  <!-- Dynamic snapshots rendered by dashboard.js -->
+                  <div class="skill-item">
+                    <div class="skill-meta">
+                      <span>Arithmetic</span>
+                      <strong>84%</strong>
+                    </div>
+                    <div class="skill-track"><div class="skill-fill" style="width: 84%; background-color: #4CAF50;"></div></div>
+                  </div>
+                  <div class="skill-item">
+                    <div class="skill-meta">
+                      <span>Algebra</span>
+                      <strong>62%</strong>
+                    </div>
+                    <div class="skill-track"><div class="skill-fill" style="width: 62%; background-color: #2196F3;"></div></div>
+                  </div>
+                  <div class="skill-item">
+                    <div class="skill-meta">
+                      <span>Geometry</span>
+                      <strong>45%</strong>
+                    </div>
+                    <div class="skill-track"><div class="skill-fill" style="width: 45%; background-color: #00BCD4;"></div></div>
+                  </div>
+                  <div class="skill-item">
+                    <div class="skill-meta">
+                      <span>Calculus</span>
+                      <strong>21%</strong>
+                    </div>
+                    <div class="skill-track"><div class="skill-fill" style="width: 21%; background-color: #9C27B0;"></div></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 2. LEARNING PEAKS -->
+        <section id="peaks-view" class="view-panel">
+          <div class="view-header">
+            <h1 class="view-title">Mountain Peaks 🏔️</h1>
+            <p class="view-subtitle">Scale mathematical heights step-by-step from zero to university mastery.</p>
+          </div>
+
+          <div class="peaks-container" id="peaks-scroll-container">
+            <!-- Dynamically populated vertical timeline course blocks -->
+          </div>
+        </section>
+
+        <!-- 3. TOPIC LESSON VIEW -->
+        <section id="lesson-view" class="view-panel">
+          <div class="lesson-navigation">
+            <button class="btn btn-icon-only btn-touchBack" id="lesson-back-btn">
+              <i data-lucide="arrow-left"></i>
+            </button>
+            <div class="lesson-meta-header">
+              <span class="peak-badge-pill" id="lesson-peak-pill">Algebra Peak</span>
+              <h2 id="lesson-topic-title">Trigonometric Units</h2>
+            </div>
+            <div class="lesson-bookmark-actions">
+              <button class="action-btn-circle" id="bookmark-lesson-btn" title="Bookmark lesson">
+                <i data-lucide="bookmark"></i>
+              </button>
+            </div>
+          </div>
+
+          <div class="lesson-content-container">
+            <!-- Interactive Switch Panel: Normal vs ELI10 -->
+            <div class="mode-toggle-wrapper">
+              <span class="mode-label normal-label">Normal Academic</span>
+              <div class="premium-switch-container">
+                <input type="checkbox" id="eli10-mode-switch" class="premium-switch-input">
+                <label for="eli10-mode-switch" class="premium-switch-slider"></label>
+              </div>
+              <span class="mode-label eli10-label glow-text">Explain Like I'm 10 🧠</span>
+            </div>
+
+            <!-- Main explanation columns -->
+            <div class="lesson-layout-grid">
+              
+              <!-- Content Pane -->
+              <div class="lesson-text-pane" id="lesson-explanation-pane">
+                <!-- Text loaded dynamically based on toggles -->
+              </div>
+
+              <!-- Reference Pane (Formulas & Equations inside responsive containers) -->
+              <div class="lesson-ref-pane">
+                <div class="formulas-card">
+                  <h3>Key Equations & Concepts</h3>
+                  <div class="equations-wrapper" id="lesson-formulas-container">
+                    <!-- Dynamic KaTeX formulas -->
+                  </div>
+                </div>
+
+                <div class="quick-action-card card-gradient">
+                  <h4>Interactive Visual Sandbox</h4>
+                  <p>Watch this math move! Play with parameters live to build direct visual intuition.</p>
+                  <button class="btn btn-primary btn-touch" id="lesson-to-visuals-btn">
+                    <i data-lucide="play-circle"></i> Launch Visual Sandbox
+                  </button>
+                </div>
+
+                <div class="quick-action-card">
+                  <h4>Practice Arena</h4>
+                  <p>Test your knowledge immediately and earn up to 50 XP!</p>
+                  <button class="btn btn-secondary btn-touch" id="lesson-to-practice-btn">
+                    <i data-lucide="puzzle"></i> Solve Quiz Questions
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- 4. PRACTICE ARENA -->
+        <section id="practice-view" class="view-panel">
+          <div class="practice-header-row">
+            <div class="arena-title-area">
+              <h1 class="view-title">Practice Arena 🧩</h1>
+              <p class="view-subtitle" id="practice-arena-subtitle">Solve problems to cement your mathematical muscle.</p>
+            </div>
+            
+            <div class="arena-difficulty-picker">
+              <label for="practice-diff-select">Difficulty:</label>
+              <select id="practice-diff-select" class="premium-select">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+                <option value="olympiad">Olympiad</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="practice-arena-layout">
+            
+            <!-- Left Quiz Area -->
+            <div class="quiz-panel card-glowing">
+              <div class="quiz-status-bar">
+                <div class="quiz-topic-indicator">
+                  <span id="practice-topic-name">Arithmetic</span>
+                  <span class="difficulty-tag easy" id="practice-difficulty-pill">Easy</span>
+                </div>
+                <div class="quiz-xp-indicator">+<span id="practice-question-xp">20</span> XP</div>
+              </div>
+
+              <div class="quiz-question-container">
+                <p class="quiz-question-text" id="practice-question-text">
+                  What is the slope of the tangent to the curve f(x) = x² at x = 3?
+                </p>
+              </div>
+
+              <!-- MCQ / Numerical Answers Wrapper -->
+              <div class="quiz-choices-grid" id="practice-options-grid">
+                <!-- Dynamically generated buttons -->
+              </div>
+
+              <!-- Action Bar -->
+              <div class="quiz-actions-bar">
+                <button class="btn btn-link" id="practice-hint-btn">
+                  <i data-lucide="help-circle"></i> Need a Hint?
+                </button>
+                <button class="btn btn-primary btn-touch hidden" id="practice-next-btn">
+                  Next Question <i data-lucide="arrow-right"></i>
+                </button>
+              </div>
+
+              <!-- Expanded solutions drawer -->
+              <div class="solution-drawer hidden" id="practice-solution-drawer">
+                <div class="solution-header">
+                  <i data-lucide="check-circle-2" class="success-icon"></i>
+                  <h4>Detailed Proof / Solution</h4>
+                </div>
+                <div class="solution-text" id="practice-solution-content">
+                  <!-- LaTeX equations explained here -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Helper Area (Scratchpad / Quick Tips) -->
+            <div class="quiz-helper-panel">
+              <div class="scratchpad-card">
+                <div class="scratchpad-header">
+                  <h3>Interactive Scratchpad</h3>
+                  <button class="btn btn-link-danger" id="clear-scratchpad-btn">Clear</button>
+                </div>
+                <canvas id="scratchpad-canvas" class="scratchpad-draw-zone"></canvas>
+                <p class="scratchpad-footer-tip"><i data-lucide="info"></i> Sketch derivatives or fractions here using your mouse or finger!</p>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 5. VISUAL SANDBOX -->
+        <section id="visuals-view" class="view-panel">
+          <div class="visuals-header-row">
+            <div>
+              <h1 class="view-title">Interactive Visual Sandbox ✨</h1>
+              <p class="view-subtitle">Interactive mathematical simulations. Change inputs and watch curves react live.</p>
+            </div>
+            
+            <div class="sandbox-selector-wrapper">
+              <label for="sandbox-select">Simulation:</label>
+              <select id="sandbox-select" class="premium-select">
+                <option value="quadratic">Quadratic Equation Visualizer</option>
+                <option value="geometry">Draggable Geometry Board</option>
+                <option value="trigonometry">Interactive Unit Circle</option>
+                <option value="derivatives">Derivative & Tangent slopes</option>
+                <option value="integration">Riemann Sum Integrals</option>
+                <option value="matrices">2D Linear Transformations</option>
+                <option value="vectors">Vector dot & cross products</option>
+                <option value="probability">Normal Distribution Simulator</option>
+                <option value="vector-calculus">Divergence & Curl Fields</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="sandbox-layout-grid">
+            
+            <!-- Graphic Simulator Canvas/Container -->
+            <div class="sandbox-display-panel card-glowing">
+              <!-- Touch active interaction boundary. Custom sizing in graphs.js -->
+              <div class="canvas-viewport" id="visuals-canvas-container">
+                <canvas id="visuals-canvas"></canvas>
+                <div id="svg-overlay-container" class="svg-overlay-box hidden"></div>
+              </div>
+              <div class="canvas-coordinates-indicator" id="canvas-coordinate-readout">
+                X: 0.00 | Y: 0.00
+              </div>
+            </div>
+
+            <!-- Parameters Dashboard Controllers -->
+            <div class="sandbox-controllers-panel">
+              <div class="controllers-card">
+                <h3 id="sandbox-controller-title">Parabolic Coefficient Controllers</h3>
+                <p class="controller-desc" id="sandbox-controller-desc">
+                  Vary standard coefficients ax² + bx + c = 0 to shift vertex locations and roots dynamically.
+                </p>
+
+                <!-- Parameter Range sliders loaded dynamically inside graphs.js -->
+                <div class="sliders-list" id="sandbox-sliders-container">
+                  <!-- Rendered dynamically -->
+                </div>
+
+                <div class="interactive-stats-panel" id="sandbox-stats-readout">
+                  <!-- Rendered dynamically -->
+                </div>
+              </div>
+
+              <!-- Quick theory summary -->
+              <div class="sandbox-explanation-card">
+                <h4>Visual Insight</h4>
+                <div id="sandbox-theory-body" class="math-wrap">
+                  <!-- Dynamic text explaining what you see in the visualizer -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 6. FORMULA HUB -->
+        <section id="formulas-view" class="view-panel">
+          <div class="view-header">
+            <h1 class="view-title">Formula & Concept Library 📖</h1>
+            <p class="view-subtitle">Instant equation index, formal mathematical proofs, and common computational mistakes.</p>
+          </div>
+
+          <div class="library-toolbar">
+            <div class="filter-buttons" id="formula-category-filters">
+              <button class="filter-btn active" data-cat="all">All Formulas</button>
+              <button class="filter-btn" data-cat="foundation">Foundation</button>
+              <button class="filter-btn" data-cat="algebra">Algebra</button>
+              <button class="filter-btn" data-cat="geometry">Geometry</button>
+              <button class="filter-btn" data-cat="calculus">Calculus</button>
+            </div>
+          </div>
+
+          <!-- Formula List Grid -->
+          <div class="formulas-grid" id="formulas-library-grid">
+            <!-- Generated dynamically in formulas.js -->
+          </div>
+        </section>
+
+        <!-- 7. SMART REVISION (SPACED REPETITION) -->
+        <section id="revision-view" class="view-panel">
+          <div class="view-header">
+            <h1 class="view-title">Smart Revision System 🔁</h1>
+            <p class="view-subtitle">Automatic spaced repetition cards based on your performance history.</p>
+          </div>
+
+          <div class="revision-grid">
+            <!-- Spaced repetition dashboard -->
+            <div class="revision-left">
+              <div class="welcome-card card-gradient">
+                <h3>Daily Review Checklist</h3>
+                <p>Spaced repetition optimizes cognitive memory retention. Retest these topics today for maximum retention!</p>
+              </div>
+
+              <div class="revision-list-card">
+                <div class="card-header">
+                  <i data-lucide="refresh-cw" class="card-icon-cyan"></i>
+                  <h2>Generated For Today</h2>
+                </div>
+                <div class="plan-list" id="revision-card-list">
+                  <!-- Dynamic items -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Weakness analytics columns -->
+            <div class="revision-right">
+              <div class="weakness-tracker-card">
+                <div class="card-header">
+                  <i data-lucide="trending-down" class="card-icon-red"></i>
+                  <h2>Weakness Detection System 📉</h2>
+                </div>
+                <p class="weakness-tagline">Topics where your practice accuracy has dipped. Focus here to seal knowledge cracks:</p>
+                <div class="weakness-list" id="weakness-auto-container">
+                  <!-- Loaded dynamically by weakness.js -->
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- 8. PROGRESS & ANALYTICS -->
+        <section id="progress-view" class="view-panel">
+          <div class="view-header">
+            <h1 class="view-title">Mathematical Progress Analytics 📊</h1>
+            <p class="view-subtitle">Detailed telemetry tracking your study streaks, accuracy, and climb history.</p>
+          </div>
+
+          <div class="analytics-row-grid">
+            
+            <div class="metric-card">
+              <div class="metric-icon-box bg-purple"><i data-lucide="zap"></i></div>
+              <div class="metric-meta">
+                <span class="metric-label">Total XP Earned</span>
+                <h3 class="metric-value" id="stats-total-xp">340 XP</h3>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-box bg-cyan"><i data-lucide="flame"></i></div>
+              <div class="metric-meta">
+                <span class="metric-label">Study Streak</span>
+                <h3 class="metric-value" id="stats-streak">37 Days</h3>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-box bg-green"><i data-lucide="check-circle"></i></div>
+              <div class="metric-meta">
+                <span class="metric-label">Practice Accuracy</span>
+                <h3 class="metric-value" id="stats-accuracy">78%</h3>
+              </div>
+            </div>
+
+            <div class="metric-card">
+              <div class="metric-icon-box bg-blue"><i data-lucide="clock"></i></div>
+              <div class="metric-meta">
+                <span class="metric-label">Lessons Completed</span>
+                <h3 class="metric-value" id="stats-lessons-count">0</h3>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="analytics-details-grid">
+            <!-- Learning Speed graph panel -->
+            <div class="graph-card">
+              <h3>XP Accumulation Over Time</h3>
+              <div class="custom-analytics-chart" id="analytics-chart-container">
+                <!-- Inline SVG bar graph showing performance dynamically -->
+                <svg width="100%" height="200" id="analytics-svg-bar-graph"></svg>
+              </div>
+            </div>
+
+            <div class="favorite-lessons-card">
+              <h3>Bookmarked & Favorite Lessons</h3>
+              <div class="fav-lessons-list" id="analytics-fav-lessons">
+                <p class="empty-state-text">No bookmarked lessons yet. Click the bookmark ribbon inside a topic to save!</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 9. SETTINGS -->
+        <section id="settings-view" class="view-panel">
+          <div class="view-header">
+            <h1 class="view-title">Configuration Settings ⚙️</h1>
+            <p class="view-subtitle">Tailor the MathPeak interface, theme, animations, and sound synthesizers.</p>
+          </div>
+
+          <div class="settings-grid">
+            
+            <div class="settings-card">
+              <h3>System Preferences</h3>
+              
+              <!-- Color theme selector -->
+              <div class="setting-row">
+                <div class="setting-meta">
+                  <h4>Deep Theme Mode</h4>
+                  <p>Toggle between Dark Navy atmosphere and Crisp Light mode.</p>
+                </div>
+                <div class="premium-switch-container">
+                  <input type="checkbox" id="settings-dark-mode-toggle" class="premium-switch-input" checked>
+                  <label for="settings-dark-mode-toggle" class="premium-switch-slider"></label>
+                </div>
+              </div>
+
+              <!-- Micro-animations toggle -->
+              <div class="setting-row">
+                <div class="setting-meta">
+                  <h4>Smooth Micro-animations</h4>
+                  <p>Disable coordinate trails and graphs updates for battery conservation.</p>
+                </div>
+                <div class="premium-switch-container">
+                  <input type="checkbox" id="settings-animations-toggle" class="premium-switch-input" checked>
+                  <label for="settings-animations-toggle" class="premium-switch-slider"></label>
+                </div>
+              </div>
+
+              <!-- Default ELI10 mode -->
+              <div class="setting-row">
+                <div class="setting-meta">
+                  <h4>Default "Explain Like I'm 10"</h4>
+                  <p>Load the simplified analogies by default when opening topics.</p>
+                </div>
+                <div class="premium-switch-container">
+                  <input type="checkbox" id="settings-eli10-toggle" class="premium-switch-input">
+                  <label for="settings-eli10-toggle" class="premium-switch-slider"></label>
+                </div>
+              </div>
+            </div>
+
+            <div class="settings-card">
+              <h3>Tactile Feedback & Difficulty</h3>
+
+              <!-- Web Audio Synthesizer Toggle -->
+              <div class="setting-row">
+                <div class="setting-meta">
+                  <h4>Synthesizer Sound Effects</h4>
+                  <p>Play celebratory chimes and action tones synthesized via Web Audio API.</p>
+                </div>
+                <div class="premium-switch-container">
+                  <input type="checkbox" id="settings-sound-toggle" class="premium-switch-input" checked>
+                  <label for="settings-sound-toggle" class="premium-switch-slider"></label>
+                </div>
+              </div>
+
+              <!-- Global Math Difficulty level -->
+              <div class="setting-row-vertical">
+                <div class="setting-meta">
+                  <h4>Math Level Target</h4>
+                  <p>Filter default practice pools to match your baseline background.</p>
+                </div>
+                <div class="btn-group-pill" id="settings-difficulty-group">
+                  <button class="pill-btn" data-level="easy">Beginner 🌱</button>
+                  <button class="pill-btn active" data-level="medium">Intermediate 📘</button>
+                  <button class="pill-btn" data-level="hard">Advanced 🧠</button>
+                </div>
+              </div>
+
+              <!-- Reset data -->
+              <div class="setting-row reset-row">
+                <div class="setting-meta">
+                  <h4 class="danger-text">Wipe Climb Data</h4>
+                  <p>Reset XP, bookmarks, weaknesses and streak trackers back to baseline.</p>
+                </div>
+                <button class="btn btn-danger btn-touch" id="settings-reset-data-btn">Reset Platform</button>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- Bottom Navigation Bar (Mobile / Tablet) -->
+    <nav class="mobile-bottom-nav">
+      <button class="mobile-nav-item active" data-view="dashboard">
+        <i data-lucide="layout-dashboard"></i>
+        <span>Home</span>
+      </button>
+      <button class="mobile-nav-item" data-view="peaks">
+        <i data-lucide="mountain"></i>
+        <span>Peaks</span>
+      </button>
+      <button class="mobile-nav-item" data-view="practice">
+        <i data-lucide="puzzle"></i>
+        <span>Quiz</span>
+      </button>
+      <button class="mobile-nav-item" data-view="visuals">
+        <i data-lucide="activity"></i>
+        <span>Sandbox</span>
+      </button>
+      <button class="mobile-nav-item" data-view="formulas">
+        <i data-lucide="book-open"></i>
+        <span>Hub</span>
+      </button>
+    </nav>
+
+  </div>
+
+  <!-- Achievements Unlocked Premium Overlay Drawer Modal -->
+  <div class="achievement-modal-overlay hidden" id="achievement-unlocked-modal">
+    <div class="achievement-modal-card card-glowing">
+      <div class="achievement-medal-large">🏆</div>
+      <h2 class="achievement-modal-title">Achievement Unlocked!</h2>
+      <h3 class="achievement-modal-name" id="achievement-unlocked-name">Fraction Warrior</h3>
+      <p class="achievement-modal-desc" id="achievement-unlocked-desc">Successfully simplify 5 advanced fractions.</p>
+      <div class="achievement-particles-canvas-wrapper">
+        <canvas id="confetti-canvas"></canvas>
+      </div>
+      <button class="btn btn-primary btn-touch" id="close-achievement-modal-btn">Fantastic!</button>
+    </div>
+  </div>
+
+  <!-- Achievements Drawer List -->
+  <div class="achievement-drawer-overlay hidden" id="achievements-drawer-panel">
+    <div class="achievements-drawer-card">
+      <div class="drawer-header">
+        <h2>Your Mathematical Trophies</h2>
+        <button class="btn btn-icon-only" id="close-achievements-drawer-btn">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="achievements-list-grid" id="achievements-drawer-list">
+        <!-- Rendered by achievements.js -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Load JavaScript Modules -->
+  <script src="data/coursesData.js"></script>
+  <script src="progress.js"></script>
+  <script src="dashboard.js"></script>
+  <script src="courses.js"></script>
+  <script src="topics.js"></script>
+  <script src="practice.js"></script>
+  <script src="visuals.js"></script>
+  <script src="graphs.js"></script>
+  <script src="formulas.js"></script>
+  <script src="revision.js"></script>
+  <script src="weakness.js"></script>
+  <script src="search.js"></script>
+  <script src="settings.js"></script>
+  <script src="achievements.js"></script>
+  <script src="mobile.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
