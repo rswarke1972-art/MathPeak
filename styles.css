@@ -2127,7 +2127,7 @@ body {
   backdrop-filter: blur(12px);
   border-top: 1px solid var(--border-gray);
   z-index: 100;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(8, 1fr);
   box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
 }
 
@@ -2139,18 +2139,25 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
+  gap: 2px;
   cursor: pointer;
+  padding: 4px 2px;
+  width: 100%;
+  min-width: 0;
 }
 
 .mobile-nav-item i {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 .mobile-nav-item span {
-  font-size: 10px;
+  font-size: 8.5px;
   font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .mobile-nav-item.active {
