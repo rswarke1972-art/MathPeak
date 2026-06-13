@@ -302,4 +302,13 @@ window.addEventListener("DOMContentLoaded", () => {
   if (window.lucide) {
     window.lucide.createIcons();
   }
+
+  // Register PWA Service Worker
+  if ("serviceWorker" in navigator) {
+    window.addEventListener("load", () => {
+      navigator.serviceWorker.register("./sw.js")
+        .then(reg => console.log("MathPeak PWA Service Worker Registered", reg))
+        .catch(err => console.error("Service Worker registration failed", err));
+    });
+  }
 });

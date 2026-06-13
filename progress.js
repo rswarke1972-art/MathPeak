@@ -232,24 +232,48 @@ class ProgressManager {
 class Synthesizer {
   constructor() {
     this.ctx = null;
+    // Set up auto-unlock for AudioContext on first user gesture
+    const unlock = () => {
+      this.init();
+      if (this.ctx && this.ctx.state === "suspended") {
+        this.ctx.resume().then(() => {
+          removeListeners();
+        }).catch(() => {});
+      } else if (this.ctx) {
+        removeListeners();
+      }
+    };
+    const removeListeners = () => {
+      window.removeEventListener("click", unlock);
+      window.removeEventListener("keydown", unlock);
+      window.removeEventListener("pointerdown", unlock);
+    };
+    window.addEventListener("click", unlock, { passive: true });
+    window.addEventListener("keydown", unlock, { passive: true });
+    window.addEventListener("pointerdown", unlock, { passive: true });
   }
 
   init() {
     if (!this.ctx) {
-      this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      try {
+        this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+      } catch (e) {
+        console.warn("Web Audio API is not supported in this browser", e);
+      }
     }
   }
 
   playSuccessTone() {
     try {
       this.init();
-      if (this.ctx.state === 'suspended') this.ctx.resume();
+      if (!this.ctx) return;
+      if (this.ctx.state === "suspended") this.ctx.resume().catch(() => {});
       
       const now = this.ctx.currentTime;
       // High-pitched sweet double chime
-      this.playNote(523.25, 'triangle', now, 0.1); // C5
-      this.playNote(659.25, 'triangle', now + 0.08, 0.15); // E5
-      this.playNote(783.99, 'triangle', now + 0.16, 0.25); // G5
+      this.playNote(523.25, "triangle", now, 0.1); // C5
+      this.playNote(659.25, "triangle", now + 0.08, 0.15); // E5
+      this.playNote(783.99, "triangle", now + 0.16, 0.25); // G5
     } catch (e) {
       console.warn("Audio Context failed", e);
     }
@@ -258,7 +282,8 @@ class Synthesizer {
   playFailureTone() {
     try {
       this.init();
-      if (this.ctx.state === 'suspended') this.ctx.resume();
+      if (!this.ctx) return;
+      if (this.ctx.state === "suspended") this.ctx.resume().catch(() => {});
       
       const now = this.ctx.currentTime;
       // Soft minor slide buzz
@@ -267,12 +292,14 @@ class Synthesizer {
       osc.connect(gain);
       gain.connect(this.ctx.destination);
       
-      osc.type = 'sawtooth';
+      osc.type = "sawtooth";
       osc.frequency.setValueAtTime(150, now);
       osc.frequency.linearRampToValueAtTime(100, now + 0.3);
       
-      gain.gain.setValueAtTime(0.08, now);
-      gain.gain.linearRampToValueAtTime(0.001, now + 0.3);
+      // Linear ramp to avoid starts/ends clicks
+      gain.gain.setValueAtTime(0.0001, now);
+      gain.gain.linearRampToValueAtTime(0.08, now + 0.01);
+      gain.gain.linearRampToValueAtTime(0.0001, now + 0.3);
       
       osc.start(now);
       osc.stop(now + 0.35);
@@ -284,34 +311,42 @@ class Synthesizer {
   playChimeTone() {
     try {
       this.init();
-      if (this.ctx.state === 'suspended') this.ctx.resume();
+      if (!this.ctx) return;
+      if (this.ctx.state === "suspended") this.ctx.resume().catch(() => {});
       
       const now = this.ctx.currentTime;
       // Beautiful harmonic chime
-      this.playNote(440.00, 'sine', now, 0.15); // A4
-      this.playNote(554.37, 'sine', now + 0.1, 0.15); // C#5
-      this.playNote(659.25, 'sine', now + 0.2, 0.3); // E5
-      this.playNote(880.00, 'sine', now + 0.3, 0.45); // A5
+      this.playNote(440.00, "sine", now, 0.15); // A4
+      this.playNote(554.37, "sine", now + 0.1, 0.15); // C#5
+      this.playNote(659.25, "sine", now + 0.2, 0.3); // E5
+      this.playNote(880.00, "sine", now + 0.3, 0.45); // A5
     } catch (e) {
       console.warn("Audio Context failed", e);
     }
   }
 
   playNote(freq, type, startTime, duration) {
-    const osc = this.ctx.createOscillator();
-    const gain = this.ctx.createGain();
-    
-    osc.connect(gain);
-    gain.connect(this.ctx.destination);
-    
-    osc.type = type;
-    osc.frequency.setValueAtTime(freq, startTime);
-    
-    gain.gain.setValueAtTime(0.06, startTime);
-    gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
-    
-    osc.start(startTime);
-    osc.stop(startTime + duration + 0.05);
+    if (!this.ctx) return;
+    try {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      
+      osc.type = type;
+      osc.frequency.setValueAtTime(freq, startTime);
+      
+      // Attack envelope (10ms) and decay to prevent popping chimes
+      gain.gain.setValueAtTime(0.0001, startTime);
+      gain.gain.exponentialRampToValueAtTime(0.06, startTime + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.0001, startTime + duration);
+      
+      osc.start(startTime);
+      osc.stop(startTime + duration + 0.02);
+    } catch (e) {
+      console.warn("Oscillator creation failed", e);
+    }
   }
 }
 

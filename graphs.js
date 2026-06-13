@@ -8,6 +8,7 @@ class GraphsCoordinator {
     this.simKey = "quadratic";
     this.params = {};
     this.animationId = null;
+    this.dragState = null; // State tracker for canvas dragging
     
     // Grid scaling factors
     this.originX = 0;
@@ -37,23 +38,96 @@ class GraphsCoordinator {
       return { x: mathX, y: mathY };
     };
 
+    const distance = (x1, y1, x2, y2) => Math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2);
+
+    this.canvas.addEventListener("pointerdown", (e) => {
+      const coords = getMathCoords(e.clientX, e.clientY);
+      this.dragState = null;
+
+      if (this.simKey === "geometry") {
+        const x1 = this.params.x1 !== undefined ? this.params.x1 : -2.0;
+        const y1 = this.params.y1 !== undefined ? this.params.y1 : 2.0;
+        const x2 = this.params.x2 !== undefined ? this.params.x2 : 3.0;
+        const y2 = this.params.y2 !== undefined ? this.params.y2 : 1.5;
+
+        if (distance(coords.x, coords.y, x1, y1) < 0.5) {
+          this.dragState = { type: "geometry", point: "A" };
+        } else if (distance(coords.x, coords.y, x2, y2) < 0.5) {
+          this.dragState = { type: "geometry", point: "B" };
+        }
+      } else if (this.simKey === "trigonometry") {
+        const theta = this.params.theta !== undefined ? this.params.theta : 45;
+        const rad = (theta * Math.PI) / 180;
+        const hx = Math.cos(rad);
+        const hy = Math.sin(rad);
+        if (distance(coords.x, coords.y, hx, hy) < 0.5) {
+          this.dragState = { type: "trigonometry" };
+        }
+      } else if (this.simKey === "derivatives") {
+        const x0 = this.params.xval !== undefined ? this.params.xval : 1.0;
+        const y0 = x0 * x0 * x0 - 3 * x0;
+        if (distance(coords.x, coords.y, x0, y0) < 0.5) {
+          this.dragState = { type: "derivatives" };
+        }
+      }
+    });
+
     this.canvas.addEventListener("pointermove", (e) => {
       const coords = getMathCoords(e.clientX, e.clientY);
       if (readout) {
         readout.textContent = `X: ${coords.x.toFixed(2)} | Y: ${coords.y.toFixed(2)}`;
       }
 
-      // Drag action for interactive tangents or coordinates if relevant
-      if (this.simKey === "derivatives" && e.buttons === 1) {
-        const input = document.getElementById("slider-xval");
-        if (input) {
+      if (this.dragState) {
+        if (this.dragState.type === "geometry") {
+          const pt = this.dragState.point;
+          const px = pt === "A" ? "x1" : "x2";
+          const py = pt === "A" ? "y1" : "y2";
+
+          const clampedX = Math.max(-4, Math.min(4, coords.x));
+          const clampedY = Math.max(-4, Math.min(4, coords.y));
+
+          this.params[px] = clampedX;
+          this.params[py] = clampedY;
+
+          // Sync DOM controls
+          const sliderX = document.getElementById(`slider-${px}`);
+          if (sliderX) sliderX.value = clampedX;
+          const valX = document.getElementById(`val-${px}`);
+          if (valX) valX.textContent = clampedX.toFixed(2);
+
+          const sliderY = document.getElementById(`slider-${py}`);
+          if (sliderY) sliderY.value = clampedY;
+          const valY = document.getElementById(`val-${py}`);
+          if (valY) valY.textContent = clampedY.toFixed(2);
+        } else if (this.dragState.type === "trigonometry") {
+          let deg = Math.atan2(coords.y, coords.x) * (180 / Math.PI);
+          if (deg < 0) deg += 360;
+
+          this.params.theta = deg;
+
+          const slider = document.getElementById("slider-theta");
+          if (slider) slider.value = deg;
+          const val = document.getElementById("val-theta");
+          if (val) val.textContent = deg.toFixed(0);
+        } else if (this.dragState.type === "derivatives") {
           const clampedX = Math.max(-2, Math.min(2, coords.x));
-          input.value = clampedX;
           this.params.xval = clampedX;
-          const valReadout = document.getElementById("val-xval");
-          if (valReadout) valReadout.textContent = clampedX.toFixed(2);
+
+          const slider = document.getElementById("slider-xval");
+          if (slider) slider.value = clampedX;
+          const val = document.getElementById("val-xval");
+          if (val) val.textContent = clampedX.toFixed(2);
         }
       }
+    });
+
+    this.canvas.addEventListener("pointerup", () => {
+      this.dragState = null;
+    });
+
+    this.canvas.addEventListener("pointerleave", () => {
+      this.dragState = null;
     });
 
     // Resize canvas dynamically
@@ -840,9 +914,9 @@ class GraphsCoordinator {
       // Binomial frequency fit overlay formula
       const bellY = (1 / (sigma * Math.sqrt(2 * Math.PI))) * Math.exp(-0.5 * ((x - mu) / sigma) ** 2);
       
-      // Scaling curve coordinates
+      // Scaling curve coordinates dynamically with sampleBatch size and max observed frequency
       const cx = 50 + x * barWidth + barWidth/2;
-      const cy = h - 50 - (bellY * maxBarHeight * 2.8); // Scale height multiplier for visual fit
+      const cy = h - 50 - (bellY * (sampleBatch / maxFreq) * maxBarHeight);
 
       if (first) {
         ctx.moveTo(cx, cy);

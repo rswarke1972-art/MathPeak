@@ -1,0 +1,22 @@
+{
+  "name": "MathPeak Mastery Platform",
+  "short_name": "MathPeak",
+  "description": "Scale mathematical heights step-by-step from zero to university mastery.",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#10203F",
+  "theme_color": "#59D5E0",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

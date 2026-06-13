@@ -47,9 +47,17 @@ class FormulasLibrary {
       });
     });
 
-    // Apply category filters
+    // Apply category filters dynamically mapping all 9 peak curriculum IDs
     if (this.activeCat !== "all") {
-      list = list.filter(item => item.peakId === this.activeCat || (this.activeCat === "calculus" && item.peakId === "higher_maths"));
+      list = list.filter(item => {
+        const cat = this.activeCat;
+        const pid = item.peakId;
+        if (cat === "foundation") return pid === "foundation" || pid === "applied" || pid === "probability";
+        if (cat === "algebra") return pid === "algebra" || pid === "logic";
+        if (cat === "geometry") return pid === "geometry";
+        if (cat === "calculus") return pid === "higher_maths" || pid === "advanced_maths" || pid === "tlmaths";
+        return pid === cat;
+      });
     }
 
     if (list.length === 0) {

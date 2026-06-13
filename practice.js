@@ -56,12 +56,18 @@ class PracticeManager {
     // Canvas scaling to match DOM bounds
     const resize = () => {
       const rect = canvas.getBoundingClientRect();
-      canvas.width = rect.width;
-      canvas.height = rect.height;
+      const dpr = window.devicePixelRatio || 1;
+      
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      canvas.style.width = rect.width + "px";
+      canvas.style.height = rect.height + "px";
       
       // Clear background
       ctx.fillStyle = "#10203F";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(0, 0, rect.width, rect.height);
       ctx.strokeStyle = "rgba(89, 213, 224, 0.4)";
       ctx.lineWidth = 2.5;
       ctx.lineCap = "round";
@@ -98,7 +104,7 @@ class PracticeManager {
     if (!this.scratchpad) return;
     const { canvas, ctx } = this.scratchpad;
     ctx.fillStyle = "#10203F";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, canvas.clientWidth, canvas.clientHeight);
   }
 
   loadArena(topicId) {
@@ -206,6 +212,7 @@ class PracticeManager {
         const btn = document.createElement("button");
         btn.className = "choice-btn btn-touch";
         btn.innerHTML = opt;
+        btn.dataset.option = opt; // Store raw option value for precise comparison
         
         // Compile LaTeX in options
         if (window.renderMathInElement) {
@@ -241,8 +248,8 @@ class PracticeManager {
       const optionsGrid = document.getElementById("practice-options-grid");
       const buttons = optionsGrid.querySelectorAll(".choice-btn");
       buttons.forEach(btn => {
-        // Evaluate option text match
-        if (btn.innerText.trim() === this.activeQuestion.answer.trim()) {
+        // Evaluate option value match using dataset attribute
+        if (btn.dataset.option.trim() === this.activeQuestion.answer.trim()) {
           btn.classList.add("correct");
         }
       });
