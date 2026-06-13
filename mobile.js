@@ -56,12 +56,41 @@ class MobileInterfaceController {
   }
 
   setupMobileMenuDrawers() {
-    // Simple hooks to expand sidebar drawer on tablets if needed in the future
-    const state = window.ProgressManager.state;
-    // Safe-guard checks against viewport overflows
+    // Hooks to expand/collapse sidebar drawer on mobile
+    const sidebar = document.querySelector(".sidebar");
+    const menuBtn = document.getElementById("mobile-menu-btn");
+    const closeBtn = document.getElementById("mobile-close-sidebar-btn");
+
+    if (menuBtn && sidebar) {
+      menuBtn.addEventListener("click", () => {
+        sidebar.classList.add("mobile-open");
+        
+        // Play click sound
+        if (window.SoundSynth && window.ProgressManager.state.preferences.sound) {
+          window.SoundSynth.playNote(587.33, "triangle", window.SoundSynth.ctx.currentTime, 0.05);
+        }
+      });
+    }
+
+    if (closeBtn && sidebar) {
+      closeBtn.addEventListener("click", () => {
+        sidebar.classList.remove("mobile-open");
+      });
+    }
+
+    // Close sidebar on tapping main content pane area (scrim action)
+    const mainContent = document.querySelector(".main-content");
+    if (mainContent && sidebar) {
+      mainContent.addEventListener("click", (e) => {
+        if (sidebar.classList.contains("mobile-open") && !e.target.closest(".mobile-menu-toggle") && !e.target.closest(".sidebar")) {
+          sidebar.classList.remove("mobile-open");
+        }
+      }, { passive: true });
+    }
+
+    // Safe-guard checks against viewport overflows on desktop resize
     window.addEventListener("resize", () => {
       const w = window.innerWidth;
-      const sidebar = document.querySelector(".sidebar");
       if (w > 1024 && sidebar) {
         sidebar.classList.remove("mobile-open");
       }

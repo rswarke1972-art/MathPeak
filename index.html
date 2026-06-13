@@ -37,11 +37,16 @@
     <!-- Sidebar Navigation (Desktop) -->
     <aside class="sidebar">
       <div class="sidebar-brand">
-        <div class="logo-icon">🏔️</div>
-        <div class="brand-text">
-          <span class="brand-name">MATHPEAK</span>
-          <span class="brand-tagline">Mastery Peak</span>
+        <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+          <div class="logo-icon">🏔️</div>
+          <div class="brand-text">
+            <span class="brand-name">MATHPEAK</span>
+            <span class="brand-tagline">Mastery Peak</span>
+          </div>
         </div>
+        <button class="mobile-close-sidebar" id="mobile-close-sidebar-btn" title="Close Menu">
+          <i data-lucide="x"></i>
+        </button>
       </div>
       
       <nav class="sidebar-nav">
@@ -95,6 +100,10 @@
       
       <!-- Top Header (Fuzzy Search & Quick Streaks) -->
       <header class="top-header">
+        <button class="action-btn-circle mobile-menu-toggle" id="mobile-menu-btn" title="Open Menu">
+          <i data-lucide="menu"></i>
+        </button>
+
         <div class="search-bar-container">
           <i data-lucide="search" class="search-icon"></i>
           <input type="text" id="global-search-input" placeholder="Fuzzy search topics, formulas, concepts... (e.g. 'derivitive')">
